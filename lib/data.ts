@@ -1,42 +1,224 @@
-export type Node = {
+export type NodeKind = "theme" | "word" | "secret";
+
+export interface GraphNode {
   id: string;
-  label: string;
-  group: "theme" | "word" | "secret";
-  x: number;
-  y: number;
-  z: number;
-};
+  name: string;
+  kind: NodeKind;
+  desc: string;
+  tags?: string[];
+  // force-graph mutates these at runtime
+  x?: number;
+  y?: number;
+  z?: number;
+  vx?: number;
+  vy?: number;
+  vz?: number;
+  fx?: number;
+  fy?: number;
+  fz?: number;
+}
 
-export type Link = { source: string; target: string };
+export interface GraphLink {
+  source: string | GraphNode;
+  target: string | GraphNode;
+}
 
-// Swap these for your real WordMatrix categories.
-export const data: { nodes: Node[]; links: Link[] } = {
+export const GRAPH_DATA: { nodes: GraphNode[]; links: GraphLink[] } = {
   nodes: [
-    { id: "t1", label: "Identity", group: "theme", x: 0, y: 2, z: 0 },
-    { id: "t2", label: "Desire", group: "theme", x: 3, y: 0, z: 1 },
-    { id: "t3", label: "Power", group: "theme", x: -3, y: 0, z: 1 },
-    { id: "t4", label: "Memory", group: "theme", x: 0, y: -2, z: 1 },
-    { id: "w1", label: "mirror", group: "word", x: 0.6, y: 2.4, z: 0.4 },
-    { id: "w2", label: "echo", group: "word", x: 1.2, y: 1.6, z: -0.3 },
-    { id: "w3", label: "hunger", group: "word", x: 3.4, y: 0.4, z: 1.2 },
-    { id: "w4", label: "crown", group: "word", x: -3.4, y: 0.4, z: 1.2 },
-    { id: "w5", label: "throne", group: "word", x: -2.6, y: -0.4, z: 0.6 },
-    { id: "w6", label: "ghost", group: "word", x: 0.4, y: -2.4, z: 1.4 },
-    { id: "w7", label: "residue", group: "word", x: -0.6, y: -1.6, z: 0.2 },
-    { id: "s1", label: "the unsaid", group: "secret", x: 1.5, y: -1.5, z: -1.5 },
-    { id: "s2", label: "the witness", group: "secret", x: -1.5, y: 1.5, z: -1.5 },
+    // ---- Themes ----
+    {
+      id: "t-rhythm",
+      name: "Rhythm",
+      kind: "theme",
+      desc: "Pulse, swing, and the pocket. Where timing becomes feeling.",
+      tags: ["tempo", "swing", "groove"],
+    },
+    {
+      id: "t-harmony",
+      name: "Harmony",
+      kind: "theme",
+      desc: "Chords, voicings, and the colors between the notes.",
+      tags: ["chords", "voicings", "color"],
+    },
+    {
+      id: "t-melody",
+      name: "Melody",
+      kind: "theme",
+      desc: "The line that carries the song. Contour, motif, hook.",
+      tags: ["motif", "hook", "contour"],
+    },
+    {
+      id: "t-texture",
+      name: "Texture",
+      kind: "theme",
+      desc: "Timbre, space, and the air around the sound.",
+      tags: ["timbre", "space", "reverb"],
+    },
+    {
+      id: "t-form",
+      name: "Form",
+      kind: "theme",
+      desc: "Structure, arrangement, and how sections breathe.",
+      tags: ["structure", "arrangement", "sections"],
+    },
+    {
+      id: "t-signal",
+      name: "Signal",
+      kind: "theme",
+      desc: "The electrical path from source to speaker. Gain, noise, fidelity.",
+      tags: ["gain", "noise", "fidelity"],
+    },
+
+    // ---- Words ----
+    {
+      id: "w-swing",
+      name: "Swing",
+      kind: "word",
+      desc: "The micro-delay that makes a grid feel human.",
+      tags: ["rhythm"],
+    },
+    {
+      id: "w-pocket",
+      name: "Pocket",
+      kind: "word",
+      desc: "The exact place a drum lands where the body agrees.",
+      tags: ["rhythm", "feel"],
+    },
+    {
+      id: "w-voicing",
+      name: "Voicing",
+      kind: "word",
+      desc: "How the notes of a chord are stacked and spaced.",
+      tags: ["harmony"],
+    },
+    {
+      id: "w-tension",
+      name: "Tension",
+      kind: "word",
+      desc: "Dissonance held just long enough to want release.",
+      tags: ["harmony", "emotion"],
+    },
+    {
+      id: "w-motif",
+      name: "Motif",
+      kind: "word",
+      desc: "A short idea that returns, transformed.",
+      tags: ["melody"],
+    },
+    {
+      id: "w-hook",
+      name: "Hook",
+      kind: "word",
+      desc: "The part you hum on the way home.",
+      tags: ["melody", "form"],
+    },
+    {
+      id: "w-timbre",
+      name: "Timbre",
+      kind: "word",
+      desc: "The color of a sound, independent of pitch.",
+      tags: ["texture"],
+    },
+    {
+      id: "w-space",
+      name: "Space",
+      kind: "word",
+      desc: "Silence and distance as instruments.",
+      tags: ["texture", "form"],
+    },
+    {
+      id: "w-gain",
+      name: "Gain",
+      kind: "word",
+      desc: "How loud a signal is, stage by stage.",
+      tags: ["signal"],
+    },
+    {
+      id: "w-noise",
+      name: "Noise",
+      kind: "word",
+      desc: "The unwanted signal that becomes character.",
+      tags: ["signal", "texture"],
+    },
+    {
+      id: "w-fidelity",
+      name: "Fidelity",
+      kind: "word",
+      desc: "How faithfully a signal survives the chain.",
+      tags: ["signal"],
+    },
+    {
+      id: "w-arrangement",
+      name: "Arrangement",
+      kind: "word",
+      desc: "Who plays what, when, and how loud.",
+      tags: ["form"],
+    },
+    {
+      id: "w-dynamics",
+      name: "Dynamics",
+      kind: "word",
+      desc: "The loud-and-soft story of a piece.",
+      tags: ["form", "texture"],
+    },
+
+    // ---- Secrets ----
+    {
+      id: "s-ghost",
+      name: "Ghost Note",
+      kind: "secret",
+      desc: "A note you almost don't play. The pocket lives here.",
+      tags: ["rhythm", "secret"],
+    },
+    {
+      id: "s-negative",
+      name: "Negative Space",
+      kind: "secret",
+      desc: "What you leave out is the arrangement.",
+      tags: ["form", "secret"],
+    },
+    {
+      id: "s-micro",
+      name: "Micro-timing",
+      kind: "secret",
+      desc: "Milliseconds decide whether a loop feels alive.",
+      tags: ["rhythm", "secret"],
+    },
+    {
+      id: "s-air",
+      name: "Air",
+      kind: "secret",
+      desc: "The top end that makes a mix feel open, not loud.",
+      tags: ["texture", "signal", "secret"],
+    },
   ],
   links: [
-    { source: "t1", target: "w1" },
-    { source: "t1", target: "w2" },
-    { source: "t2", target: "w3" },
-    { source: "t3", target: "w4" },
-    { source: "t3", target: "w5" },
-    { source: "t4", target: "w6" },
-    { source: "t4", target: "w7" },
-    { source: "w1", target: "s2" },
-    { source: "w6", target: "s1" },
-    { source: "w3", target: "s1" },
-    { source: "s1", target: "s2" },
+    // theme -> words
+    { source: "t-rhythm", target: "w-swing" },
+    { source: "t-rhythm", target: "w-pocket" },
+    { source: "t-harmony", target: "w-voicing" },
+    { source: "t-harmony", target: "w-tension" },
+    { source: "t-melody", target: "w-motif" },
+    { source: "t-melody", target: "w-hook" },
+    { source: "t-texture", target: "w-timbre" },
+    { source: "t-texture", target: "w-space" },
+    { source: "t-signal", target: "w-gain" },
+    { source: "t-signal", target: "w-noise" },
+    { source: "t-signal", target: "w-fidelity" },
+    { source: "t-form", target: "w-arrangement" },
+    { source: "t-form", target: "w-dynamics" },
+    // word -> secret
+    { source: "w-swing", target: "s-ghost" },
+    { source: "w-pocket", target: "s-micro" },
+    { source: "w-space", target: "s-negative" },
+    { source: "w-timbre", target: "s-air" },
+    { source: "w-gain", target: "s-air" },
+    // cross-theme bridges
+    { source: "t-rhythm", target: "t-form" },
+    { source: "t-harmony", target: "t-melody" },
+    { source: "t-texture", target: "t-signal" },
+    { source: "t-form", target: "t-melody" },
+    { source: "w-hook", target: "w-motif" },
+    { source: "w-dynamics", target: "w-space" },
   ],
 };
